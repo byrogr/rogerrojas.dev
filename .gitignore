@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.env
+api/local.settings.json
+api/.venv/
+__pycache__/
+.pytest_cache/
+.DS_Store
+specs/
+CLAUDE.md
