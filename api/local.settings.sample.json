@@ -1,0 +1,11 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "",
+    "TURNSTILE_SECRET_KEY": "1x0000000000000000000000000000000AA",
+    "ACS_CONNECTION_STRING": "",
+    "MAIL_SENDER": "",
+    "MAIL_TO": ""
+  }
+}

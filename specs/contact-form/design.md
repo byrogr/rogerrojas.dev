@@ -54,8 +54,11 @@ Respuestas:
 api/
   function_app.py          # registro de la función HTTP (modelo v2) y orquestación
   host.json
-  requirements.txt         # azure-functions, azure-communication-email, httpx (o requests)
-  local.settings.sample.json   # plantilla sin secretos; el real está en .gitignore
+  requirements.txt         # dependencias de producción: azure-functions, azure-communication-email, httpx (o requests); cada tarea añade la suya
+  requirements-dev.txt     # requirements.txt + pytest (solo local, no se despliega)
+  pytest.ini               # pythonpath y carpeta de pruebas
+  .funcignore              # excluye .venv, tests y archivos locales del paquete desplegado
+  local.settings.sample.json   # plantilla sin secretos (claves de prueba de Turnstile); el real está en .gitignore
   contact/
     validation.py          # parseo y reglas de R5 (funciones puras)
     turnstile.py           # cliente de siteverify (timeout, idempotency_key opcional)

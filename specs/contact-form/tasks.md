@@ -10,7 +10,7 @@ Marca `[x]` al terminar. «Cubre» indica los requisitos de `requirements.md`.
 
 ## Fase 1 — API en Python
 
-- [ ] **T1.1** Crear `api/` con `host.json`, `requirements.txt`, `local.settings.sample.json` y un `function_app.py` mínimo que responda `405` a no-POST. Crear `public/staticwebapp.config.json` mínimo con `platform.apiRuntime: python:3.11` (SWA lo lee de la carpeta desplegada `dist/`, no de `api/`; `azure-deploy` T1.2 le añade la 404 y las cabeceras). Añadir `api/local.settings.json` al `.gitignore`. *Cubre: R7, R10.*
+- [x] **T1.1** Crear `api/` con `host.json`, `requirements.txt`, `local.settings.sample.json` y un `function_app.py` mínimo que responda `405` a no-POST. Crear `public/staticwebapp.config.json` mínimo con `platform.apiRuntime: python:3.11` (SWA lo lee de la carpeta desplegada `dist/`, no de `api/`; `azure-deploy` T1.2 le añade la 404 y las cabeceras). Añadir `api/local.settings.json` al `.gitignore`. *Cubre: R7, R10.*
   *Aceptación:* `func start` (o el emulador de SWA) sirve `/api/contact`.
 - [ ] **T1.2** `contact/validation.py` + `tests/test_validation.py`: reglas de R5 como funciones puras (recorte, longitudes, formato de email, rechazo de saltos de línea). *Cubre: R5.*
   *Aceptación:* casos válidos, límites exactos (9/10 y 2000/2001 caracteres) y cabeceras inyectadas cubiertos.
