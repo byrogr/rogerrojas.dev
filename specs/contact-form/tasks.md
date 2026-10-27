@@ -4,8 +4,8 @@ Marca `[x]` al terminar. «Cubre» indica los requisitos de `requirements.md`.
 
 ## Fase 0 — Preparación
 
-- [ ] **T0.1 (manual)** Crear el sitio en Cloudflare Turnstile (modo gestionado) y anotar *site key* y *secret key*. Dominios permitidos: `localhost` y, más adelante, el dominio real. *Cubre: R3, R10.*
-- [ ] **T0.2** Resolver los puntos **VERIFICAR** de `design.md` (Turnstile gratis, modelo v2 de Python en SWA, `replyTo` del SDK, claves de prueba) leyendo la documentación oficial; anotar la conclusión en `design.md`.
+- [x] **T0.1 (manual)** Crear el sitio en Cloudflare Turnstile (modo gestionado) y anotar *site key* y *secret key*. Dominios permitidos: `localhost` y, más adelante, el dominio real. *Cubre: R3, R10.*
+- [x] **T0.2** Resolver los puntos **VERIFICAR** de `design.md` (Turnstile gratis, modelo v2 de Python en SWA, `replyTo` del SDK, claves de prueba) leyendo la documentación oficial; anotar la conclusión en `design.md`.
   *Aceptación:* ningún **VERIFICAR** queda sin resolver.
 
 ## Fase 1 — API en Python
