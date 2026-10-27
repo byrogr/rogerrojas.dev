@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { formatDate } from '../utils/format';
 
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
   .slice(0, 3);
@@ -273,21 +275,34 @@ Uni&lt;Response&gt; create(Transfer t) &#123;
           </ul>
         </div>
 
-        <!-- TODO: crea un formulario en https://formspree.io (u otro servicio) y reemplaza TU_ID -->
-        <form class="contact" action="https://formspree.io/f/TU_ID" method="POST">
+        <form class="contact" id="contact-form" action="/api/contact" method="POST">
+          <noscript>
+            <p class="form-notice">
+              Para enviar este formulario necesitas activar JavaScript. También puedes escribirme por
+              <a href="https://www.linkedin.com/in/roger-rojas-effio/" rel="noopener">LinkedIn</a>.
+            </p>
+          </noscript>
           <label>
             Nombre
-            <input type="text" name="nombre" autocomplete="name" required />
+            <input type="text" name="nombre" autocomplete="name" maxlength="100" required />
           </label>
           <label>
             Correo electrónico
-            <input type="email" name="email" autocomplete="email" required />
+            <input type="email" name="email" autocomplete="email" maxlength="254" required />
           </label>
           <label>
             Mensaje
-            <textarea name="mensaje" required></textarea>
+            <textarea name="mensaje" minlength="10" maxlength="2000" required></textarea>
           </label>
+          <div class="hp" aria-hidden="true">
+            <label>
+              No completes este campo
+              <input type="text" name="website" tabindex="-1" autocomplete="off" />
+            </label>
+          </div>
+          <div id="turnstile" class="turnstile" data-sitekey={turnstileSiteKey}></div>
           <button class="btn primary" type="submit">Enviar mensaje</button>
+          <p class="form-status" id="contact-status" role="status" aria-live="polite"></p>
           <small>Usaré tus datos únicamente para responderte.</small>
         </form>
       </div>

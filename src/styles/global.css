@@ -679,6 +679,42 @@ form.contact small {
   color: var(--muted);
   font-size: 13px;
 }
+/* Honeypot: off-screen instead of display:none so bots still fill it (R4) */
+form.contact .hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+/* Reserves the widget height to avoid a layout jump when Turnstile loads */
+form.contact .turnstile {
+  min-height: 65px;
+}
+form.contact .form-status {
+  margin: 0;
+  font-size: 15px;
+  color: var(--soft);
+}
+form.contact .form-status:empty {
+  display: none;
+}
+form.contact .form-status[data-state='success'] {
+  color: var(--teal);
+}
+form.contact .form-status[data-state='error'] {
+  color: var(--amber);
+}
+form.contact .form-notice {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--amber);
+  border-radius: 10px;
+  color: var(--soft);
+}
+form.contact .form-notice a {
+  color: var(--cyan);
+}
 
 /* ===== Footer ===== */
 .site-footer {
