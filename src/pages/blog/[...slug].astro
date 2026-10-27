@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { formatDate, readingMinutes } from '../../utils/format';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const minutes = readingMinutes(post.body);
+---
+
+<Base title={post.data.title} description={post.data.description} current="blog">
+  <header class="post-head">
+    <div class="narrow">
+      <a class="back" href="/blog/">← Volver al blog</a>
+      <p class="post-meta">
+        <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time> · {minutes} min de lectura
+      </p>
+      <h1>{post.data.title}</h1>
+      <div class="tags">{post.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+    </div>
+  </header>
+
+  <article class="narrow prose">
+    <Content />
+  </article>
+</Base>

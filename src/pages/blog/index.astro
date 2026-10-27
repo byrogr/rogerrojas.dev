@@ -1,0 +1,38 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { formatDate, readingMinutes } from '../../utils/format';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<Base
+  title="Blog"
+  description="Artículos sobre backend, Java, Python, Azure e IA aplicada, escritos por Roger Rojas."
+  current="blog"
+>
+  <section class="page-head">
+    <div class="container">
+      <p class="eyebrow">Blog</p>
+      <h1 class="title">Notas de un ingeniero backend</h1>
+      <p class="lead">
+        Backend, Java, Python, Azure e IA aplicada. Lo que construyo y lo que aprendo en el camino.
+      </p>
+
+      {posts.length === 0 && <p class="lead">Aún no hay artículos publicados.</p>}
+
+      <div class="post-list">
+        {posts.map((p) => (
+          <a class="post-card" href={`/blog/${p.id}/`}>
+            <p class="meta">{formatDate(p.data.pubDate)} · {readingMinutes(p.body)} min de lectura</p>
+            <h2>{p.data.title}</h2>
+            <p>{p.data.description}</p>
+            <div class="tags">{p.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
