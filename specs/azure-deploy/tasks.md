@@ -26,7 +26,7 @@ Depende de `specs/contact-form/` (al menos hasta T1.5 para desplegar la API).
 
 - [ ] **T2.1 (manual)** Crear el grupo de recursos y el recurso **Static Web Apps (Free)** vinculado al repositorio;
   guardar el token en los secretos de GitHub. *Cubre: D1, D2.*
-- [ ] **T2.2 (manual)** Crear **Communication Services** + **Email Communication Service** con dominio administrado por Azure;
+- [x] **T2.2 (manual)** Crear **Communication Services** + **Email Communication Service** con dominio administrado por Azure;
   copiar remitente y cadena de conexión. *Cubre: D8.*
 - [ ] **T2.3 (manual)** Cargar en *Application settings* de SWA: `TURNSTILE_SECRET_KEY`, `ACS_CONNECTION_STRING`,
   `MAIL_SENDER`, `MAIL_TO`. *Cubre: D7, D8.*

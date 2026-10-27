@@ -42,11 +42,18 @@ Respuestas:
 | Código | Cuándo | Cuerpo |
 | --- | --- | --- |
 | `200` | Enviado, o honeypot activado | `{"ok": true}` |
+| `400` | JSON mal formado, no UTF-8 o que no es un objeto | `{"ok": false, "code": "bad_request"}` |
 | `400` | Validación fallida | `{"ok": false, "code": "validation", "fields": {"email": "Correo no válido"}}` |
 | `400` | Captcha ausente/inválido | `{"ok": false, "code": "captcha", "message": "No pudimos verificar que eres humano. Inténtalo de nuevo."}` |
 | `413` / `415` / `405` | Cuerpo grande / tipo / método | `{"ok": false, "code": "bad_request"}` |
 | `500` | Error inesperado en la función | `{"ok": false, "code": "internal", "message": "No pudimos enviar tu mensaje. Inténtalo más tarde."}` |
-| `503` | Turnstile o ACS no disponible | `{"ok": false, "code": "unavailable", "message": "No pudimos enviar tu mensaje. Inténtalo más tarde."}` |
+| `503` | Turnstile o ACS no disponible, o falta una variable de entorno | `{"ok": false, "code": "unavailable", "message": "No pudimos enviar tu mensaje. Inténtalo más tarde."}` |
+
+Orden de comprobación en `function_app.py`: método (`405`, con cabecera `Allow: POST`) → `Content-Type` (`415`; se acepta `application/json; charset=…`) → tamaño > 10 240 bytes (`413`) → JSON (`400 bad_request`) → honeypot (`200`) → validación (`400 validation`) → configuración (`503`, **antes** de Turnstile para no gastar el token del visitante) → captcha (`400 captcha` / `503`) → envío (`503` si falla). Cualquier excepción no prevista da `500 internal`. Las respuestas son JSON UTF-8.
+
+La IP enviada a Turnstile (`remoteip`) es la primera de `X-Forwarded-For`, sin puerto, y solo se envía si es una IPv4/IPv6 válida.
+
+Logs: solo eventos («honeypot activado», «captcha rechazado» con sus códigos, «mensaje enviado»), nombres de variables que faltan y tipos de error. Nunca nombre, correo, mensaje, token, IP ni secretos (R8; hay pruebas que lo comprueban).
 
 ## Estructura de `api/`
 
@@ -54,15 +61,15 @@ Respuestas:
 api/
   function_app.py          # registro de la función HTTP (modelo v2) y orquestación
   host.json
-  requirements.txt         # dependencias de producción: azure-functions, azure-communication-email, httpx (o requests); cada tarea añade la suya
+  requirements.txt         # dependencias de producción: azure-functions, azure-communication-email; cada tarea añade la suya
   requirements-dev.txt     # requirements.txt + pytest (solo local, no se despliega)
   pytest.ini               # pythonpath y carpeta de pruebas
   .funcignore              # excluye .venv, tests y archivos locales del paquete desplegado
   local.settings.sample.json   # plantilla sin secretos (claves de prueba de Turnstile); el real está en .gitignore
   contact/
     validation.py          # parseo y reglas de R5 (funciones puras)
-    turnstile.py           # cliente de siteverify (timeout, idempotency_key opcional)
-    mailer.py              # armado del mensaje y envío con EmailClient
+    turnstile.py           # cliente de siteverify con urllib estándar (timeout 5 s, sin reintentos)
+    mailer.py              # armado del mensaje (texto + HTML escapado) y envío con EmailClient.begin_send, sin esperar al poller
     config.py              # lectura de variables de entorno (R10)
   tests/
     test_validation.py
@@ -80,13 +87,27 @@ api/
 5. **Sin almacenamiento ni rate limit persistente** (evita costo): defensa por Turnstile + honeypot + límites de tamaño. Si aparece abuso, evaluar limitar por IP con un contador en memoria (mejor esfuerzo) antes de añadir recursos de pago.
 6. **Reply-To:** incluir el correo del visitante en el cuerpo siempre y, además, como `replyTo`. *Verificado (V4):* el SDK `azure-communication-email` (1.1.0, Python ≥ 3.9) acepta en el mensaje de `begin_send` un campo de primer nivel `"replyTo": [{"address": "...", "displayName": "..."}]`. El correo del visitante ya llega validado y sin saltos de línea (R5).
 
+7. **Cliente HTTP de siteverify con `urllib.request`** (biblioteca estándar) en lugar de `httpx` o `requests`: es una sola petición POST JSON con timeout y así no se suma ninguna dependencia de producción. Detalles:
+   - Timeout de 5 s y sin reintentos, así que no hace falta `idempotency_key`.
+   - El token vacío o de más de 2048 caracteres se rechaza sin llamar a Cloudflare, y una secret key vacía da `503` sin llamar.
+   - Si Cloudflare responde un 4xx con JSON (pasa con una secret inválida), se clasifica por sus `error-codes`.
+   - Los logs solo registran el tipo de error o los códigos, nunca el token, la secret ni la IP.
+
+8. **Envío sin esperar la entrega:** `mailer.send` llama a `begin_send` y no espera al poller (`poller.result()`). ACS ya rechaza en esa llamada los errores que importan (credenciales, `429` por el límite del dominio administrado, red), y esperar la entrega añadiría segundos a cada envío. Esos errores, y una cadena de conexión vacía o mal formada, se convierten en `MailError` → `503` (R8). Un fallo de entrega posterior no llega al visitante; se vería en los logs de ACS. Dependencia: `azure-communication-email>=1.1,<2`.
+
 ## Frontend (Astro)
 
 - Widget con **renderizado explícito** (*verificado, V5*): `turnstile.reset()` y `turnstile.getResponse()` exigen el `widgetId` que devuelve `turnstile.render()`, así que el renderizado implícito (`class="cf-turnstile"`) no sirve para R9. En el formulario va un contenedor `<div id="turnstile" data-sitekey={import.meta.env.PUBLIC_TURNSTILE_SITE_KEY}>` (sin la clase `cf-turnstile`). `contact.ts` define el callback de carga y después inserta `<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad">`; ese callback llama a `turnstile.render('#turnstile', { sitekey })` y guarda el `widgetId`.
 - Envío: pequeño script (sin librerías) en `src/scripts/contact.ts`, cargado con un `<script>` procesado por Astro, que toma el token con `turnstile.getResponse(widgetId)` (no depende del campo oculto `cf-turnstile-response`), hace `fetch('/api/contact', { method: 'POST', body: JSON.stringify(...) })`, gestiona el estado y llama a `turnstile.reset(widgetId)` si hay error de captcha. El token caduca a los 300 s y es de un solo uso (V5).
 - **Compatibilidad con la CSP** (`script-src 'self'` sin `'unsafe-inline'`): Astro inlinea en el HTML los scripts procesados menores que `assetsInlineLimit` (4 KB por defecto; comprobado en `astro/dist/core/build/plugins/plugin-scripts.js`, Astro 7.4). Por eso se fija `vite.build.assetsInlineLimit: 0` para emitirlos siempre como archivo. Nada de `is:inline`, `define:vars` ni atributos `on*`; la site key llega al widget por `data-sitekey`.
 - Campo `website`: oculto con CSS (no `display:none` si molesta a lectores; usar posición fuera de pantalla), `tabindex="-1"`, `autocomplete="off"`, `aria-hidden="true"`.
-- Mensajes de estado en una región `role="status"` / `aria-live="polite"`.
+- Mensajes de estado en una región `role="status"` / `aria-live="polite"` (`#contact-status`); su color lo da `data-state="success" | "error"` (turquesa / ámbar de la paleta).
+- Comportamiento de `contact.ts`:
+  - Widget con `theme: 'dark'` y `language: 'es'`. Si el build no recibió site key, el botón queda deshabilitado con un aviso.
+  - Antes de enviar exige un token; si no lo hay, pide completar la verificación sin llamar a la API.
+  - El widget se reinicia tras **cualquier respuesta que pudo gastar el token**: éxito, captcha rechazado, `5xx`/`413`/`415` y error de red. No se reinicia tras `400 validation`, porque la validación ocurre antes de verificar el captcha y el token sigue sin usar.
+  - Los campos que la API marca como inválidos reciben `aria-invalid="true"`.
+- Los campos repiten en HTML los límites de R5 (`maxlength` 100/254/2000, `minlength` 10 en el mensaje) para avisar antes de enviar; la validación que manda sigue siendo la del servidor.
 - Sin JS: el formulario muestra un aviso `<noscript>` con el enlace de LinkedIn como alternativa.
 
 ## Variables de entorno
@@ -119,6 +140,25 @@ Conclusiones contrastadas con la documentación oficial para los puntos que esta
 - **V4 — SDK de correo:** `azure-communication-email` 1.1.0 (17-oct-2025, Python ≥ 3.9). `EmailClient.from_connection_string(...)`, `begin_send(message)` devuelve un poller; mensaje con `senderAddress`, `recipients.to[]`, `content.{subject, plainText, html}` y `replyTo[]` (`{address, displayName}`). Errores como `azure.core.exceptions.HttpResponseError`. [README del SDK](https://learn.microsoft.com/python/api/overview/azure/communication-email-readme) · [PyPI](https://pypi.org/project/azure-communication-email/)
 - **V5 — Widget y siteverify:** script `https://challenges.cloudflare.com/turnstile/v0/api.js` (`?render=explicit` para renderizado explícito); `reset`, `getResponse`, `remove` e `isExpired` reciben el `widgetId`. Token válido 300 s, un solo uso, máximo 2048 caracteres. Siteverify: `POST https://challenges.cloudflare.com/turnstile/v0/siteverify`, acepta JSON o form-urlencoded con `secret`, `response`, `remoteip` (opcional) e `idempotency_key` (opcional); responde `success`, `error-codes`, `hostname`, `challenge_ts`. Códigos: `missing-input-secret`, `invalid-input-secret`, `missing-input-response`, `invalid-input-response`, `bad-request`, `timeout-or-duplicate`, `internal-error`. Mapeo: errores del token → `400 captcha` (R2); errores de secreto, `internal-error`, timeout o fallo de red → `503 unavailable` (R8). [Renderizado en cliente](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/) · [Validación en servidor](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)
 - **V6 — Claves de prueba:** ver la tabla de «Variables de entorno». [Testing](https://developers.cloudflare.com/turnstile/troubleshooting/testing/)
+
+## Desarrollo local
+
+El README es una presentación del sitio; la guía técnica vive aquí y en los comentarios de `.env.example`.
+
+1. **Frontend:** `cp .env.example .env`. Trae la site key de prueba que siempre pasa (`1x00000000000000000000AA`).
+2. **API:**
+   ```bash
+   cd api
+   python3.11 -m venv .venv && source .venv/bin/activate
+   pip install -r requirements-dev.txt
+   cp local.settings.sample.json local.settings.json   # ignorado por git
+   python -m pytest
+   func start                                         # http://localhost:7071/api/contact
+   ```
+   `local.settings.sample.json` trae la secret de prueba que siempre pasa. Para enviar correos de verdad hay que completar `ACS_CONNECTION_STRING`, `MAIL_SENDER` y `MAIL_TO` en `local.settings.json`; sin ellas la API responde `503`. Requiere Azure Functions Core Tools 4 (`brew tap azure/functions && brew install azure-functions-core-tools@4`).
+3. **Juntos:** `npm run dev` no redirige `/api` a la función. Para probar el formulario completo se usa el emulador de Static Web Apps (T3.1).
+
+El aviso «Unable to create client for AzureWebJobsStorage» de `func start` es inofensivo: una función solo HTTP no necesita almacenamiento.
 
 ## Riesgos
 

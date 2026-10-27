@@ -56,8 +56,8 @@ automáticas con `pytest` que **no** hagan llamadas de red reales.
 
 ## Criterios de aceptación globales
 
-- [ ] Enviar el formulario en local (con claves de prueba) entrega un correo al buzón configurado.
-- [ ] Un token inválido o repetido no entrega correo y muestra el error de captcha.
-- [ ] Con el honeypot lleno, la respuesta es `200` y no hay correo ni llamada a Turnstile.
-- [ ] `npm run build` y `cd api && python -m pytest` pasan.
+- [x] Enviar el formulario en local (con claves de prueba) entrega un correo al buzón configurado.
+- [x] Un token inválido o repetido no entrega correo y muestra el error de captcha.
+- [x] Con el honeypot lleno, la respuesta es `200` y no hay correo ni llamada a Turnstile.
+- [x] `npm run build` y `cd api && python -m pytest` pasan.
 - [ ] Ningún secreto aparece en el repositorio (`git grep` limpio).
