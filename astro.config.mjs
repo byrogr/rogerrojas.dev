@@ -7,4 +7,8 @@ export default defineConfig({
   markdown: {
     shikiConfig: { theme: 'github-dark-dimmed' },
   },
+  // Always emit processed scripts as files: the CSP (script-src 'self') forbids inline scripts.
+  vite: {
+    build: { assetsInlineLimit: 0 },
+  },
 });
