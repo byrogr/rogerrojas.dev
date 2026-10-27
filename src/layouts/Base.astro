@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  current?: 'inicio' | 'blog';
+}
+
+const {
+  title,
+  description = 'Roger Rojas Effio — Ingeniería de Software. Construyendo sistemas backend escalables con Java y Python.',
+  current = 'inicio',
+} = Astro.props;
+
+const pageTitle = title ? `${title} · Roger Rojas` : 'Roger Rojas Effio · Ingeniería de Software';
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#060A0F" />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="Blog de Roger Rojas" href="/rss.xml" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_PE" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&family=JetBrains+Mono:wght@400;500;700&family=Open+Sans:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body id="top">
+    <a class="skip" href="#contenido">Saltar al contenido</a>
+    <header class="site-header">
+      <div class="container">
+        <a class="logo" href="/" aria-label="Roger Rojas — inicio">
+          <span class="a">&lt;</span><span class="t">/</span><span class="a">&gt;</span> roger.rojas
+        </a>
+        <nav class="nav" aria-label="Principal">
+          <a href="/#sobre-mi">Sobre mí</a>
+          <a href="/#experiencia">Experiencia</a>
+          <a href="/#proyectos">Proyectos</a>
+          <a href="/blog/" aria-current={current === 'blog' ? 'page' : undefined}>Blog</a>
+          <a href="/#contacto">Contacto</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div>
+          <p><strong>Roger Rojas Effio</strong> · Ingeniería de Software</p>
+          <p>© {year} Todos los derechos reservados</p>
+        </div>
+        <nav aria-label="Pie de página">
+          <a href="/#sobre-mi">Sobre mí</a>
+          <a href="/#proyectos">Proyectos</a>
+          <a href="/blog/">Blog</a>
+          <a href="#top">Volver arriba ↑</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
