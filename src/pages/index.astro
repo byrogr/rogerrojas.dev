@@ -1,0 +1,296 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { formatDate } from '../utils/format';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+const tech = [
+  { n: 'Java', c: 'amber' },
+  { n: 'Python', c: 'teal' },
+  { n: '.NET Core', c: 'lav' },
+  { n: 'Quarkus' },
+  { n: 'Spring Boot' },
+  { n: 'Spring WebFlux' },
+  { n: 'Kafka' },
+  { n: 'Azure' },
+  { n: 'Kubernetes' },
+  { n: 'Docker' },
+  { n: 'Redis' },
+  { n: 'OpenAPI' },
+  { n: 'LangChain4j' },
+];
+
+const stats = [
+  { n: '6+', l: 'años de experiencia en desarrollo', c: 'amber' },
+  { n: '3', l: 'tecnologías: Java, Quarkus y Spring Boot', c: 'teal' },
+  { n: 'AZ-900', l: 'Microsoft Certified: Azure Fundamentals', c: 'cyan' },
+  { n: 'AI-200', l: 'Azure AI Cloud Developer, en preparación', c: 'lav' },
+];
+
+const jobs = [
+  {
+    now: true,
+    when: 'sept. 2026 — actualidad',
+    role: 'Senior Software Engineer',
+    org: 'Inetum · Proyecto Cross Border Payments (BCP)',
+    desc: 'Desarrollo microservicios y APIs seguras para las transferencias internacionales del Banco de Crédito del Perú, desplegados en Kubernetes sobre Azure, con mensajería asíncrona sobre Confluent Kafka y foco en trazabilidad y disponibilidad.',
+    tags: ['Java', 'Quarkus', 'Kubernetes', 'Azure', 'Confluent Kafka', 'OpenAPI'],
+  },
+  {
+    when: 'dic. 2024 — ago. 2026',
+    role: 'Senior Software Engineer',
+    org: 'Encora · Proyecto CriptoCocos (BCP)',
+    desc: 'Lideré el diseño y la evolución de microservicios reactivos de alta disponibilidad. Integré el proveedor BitGo para las compras y ventas de criptoactivos y diseñé las órdenes limit de forma asíncrona con Azure Event Grid, usando Redis para garantizar la idempotencia.',
+    tags: ['Java', 'Spring WebFlux', 'Azure', 'Event Grid', 'Redis', 'Key Vault', 'Azure SQL'],
+  },
+  {
+    when: 'sept. 2023 — oct. 2024',
+    role: 'Software Developer',
+    org: 'Culqi',
+    desc: 'Diseño y mantenimiento de servicios de pagos con programación reactiva en Java y aplicaciones en TypeScript, con integración de componentes en Azure y AWS.',
+    tags: ['Java', 'Spring WebFlux', 'TypeScript', 'NestJS', 'AWS', 'Azure'],
+  },
+  {
+    when: 'feb. 2022 — sept. 2023',
+    role: 'Software Developer · Solutions Analyst',
+    org: 'NTT DATA Europe & Latam',
+    desc: 'Microservicios reactivos sobre Azure (AKS, Functions, App Services) y mejoras en los flujos operativos de la billetera digital IziapayYA.',
+    tags: ['Java', 'Spring WebFlux', 'AKS', 'Docker', 'Azure Functions'],
+  },
+  {
+    when: 'ene. 2021 — ene. 2022',
+    role: 'Software Developer Technical Lead',
+    org: 'Indra · Clientes Telefónica y Scotiabank',
+    desc: 'Lideré un equipo de 6 desarrolladores, de la estimación y el análisis de requerimientos a la entrega, con transición de metodologías tradicionales a Scrum.',
+    tags: ['Java', 'Spring Boot', 'Azure', 'Scrum'],
+  },
+];
+
+const certs = [
+  { n: 'Microsoft Certified: Azure Fundamentals', s: 'Microsoft · sept. 2026' },
+  { n: 'Java 21 Backend Developer', s: 'MitoCode · nov. 2024' },
+  { n: 'Azure para desarrollo y programación', s: 'LinkedIn · feb. 2025' },
+  { n: 'AI-901 y AI-200 (Azure AI)', s: 'En preparación' },
+];
+---
+
+<Base>
+  <section class="hero">
+    <div class="container">
+      <div>
+        <p class="prompt">roger@backend:~$ <span>whoami</span></p>
+        <p class="name">Roger Rojas Effio</p>
+        <h1>Construyendo sistemas <span class="a">backend</span> <span class="t">escalables</span></h1>
+        <p class="desc">
+          Ingeniero de software senior. Diseño microservicios y APIs en Java y Python para entornos donde la
+          confiabilidad no se negocia: pagos, banca y demás aplicaciones críticas en la nube. Comparto lo que aprendo en este blog.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="#proyectos">Ver proyectos</a>
+          <a class="btn ghost" href="#contacto">Contactar</a>
+        </div>
+        <p class="scroll-hint">↓ Desplázate para explorar</p>
+      </div>
+
+      <div class="code-card" aria-hidden="true">
+        <div class="bar">
+          <i></i><i></i><i></i>
+          <span class="on">Transfer.java</span>
+          <span>reconcile.py</span>
+          <span>Ledger.cs</span>
+        </div>
+<pre><span class="j">@POST @Path("/transfers")</span>
+Uni&lt;Response&gt; create(Transfer t) &#123;
+  return service.process(t);
+&#125;
+
+<span class="p">async def reconcile(batch):</span>
+    return await ledger.match(batch)
+
+<span class="n">public Task&lt;Result&gt; Match(Batch b)</span></pre>
+      </div>
+    </div>
+  </section>
+
+  <div class="tech">
+    <div class="container">
+      <span class="label">Tecnologías</span>
+      {tech.map((t) => <span class={`tag ${t.c ?? ''}`}>{t.n}</span>)}
+    </div>
+  </div>
+
+  <section id="sobre-mi">
+    <div class="container">
+      <p class="eyebrow">Sobre mí</p>
+      <h2 class="title">Backend confiable, de punta a punta</h2>
+      <div class="about-grid">
+        <div>
+          <p>
+            Soy ingeniero backend senior con +6 años de experiencia diseñando y desarrollando microservicios y APIs en
+            entornos donde la disponibilidad y la trazabilidad de cada operación son críticas.
+          </p>
+          <p>
+            Hoy desarrollo soluciones con Quarkus, Kubernetes y Kafka sobre Azure para sector bancario y financiero, y aplico la IA a casos reales de pagos y finanzas. 
+            Me apasiona la programación reactiva, la arquitectura de microservicios y la trazabilidad de extremo a extremo.
+          </p>
+          <p class="cv">
+            <!-- Coloca tu CV en public/cv-roger-rojas.pdf -->
+            <a class="btn ghost" href="/cv-roger-rojas.pdf" download>Descargar CV</a>
+          </p>
+        </div>
+        <div class="stats">
+          {stats.map((s) => (
+            <div class="stat">
+              <b class={`c-${s.c}`}>{s.n}</b>
+              <span>{s.l}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="experiencia" class="alt">
+    <div class="container">
+      <p class="eyebrow">Experiencia</p>
+      <h2 class="title">Mi recorrido</h2>
+      <ol class="timeline">
+        {jobs.map((j) => (
+          <li class={`job ${j.now ? 'now' : ''}`}>
+            <p class="when">{j.when}</p>
+            <h3>{j.role}</h3>
+            <p class="org">{j.org}</p>
+            <p class="d">{j.desc}</p>
+            <div class="tags">{j.tags.map((t) => <span class="tag">{t}</span>)}</div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="certs">
+        {certs.map((c) => (
+          <div class="cert">
+            <b>{c.n}</b>
+            <span>{c.s}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="proyectos">
+    <div class="container">
+      <p class="eyebrow">Proyectos</p>
+      <h2 class="title">Proyectos destacados</h2>
+      <div class="projects">
+        <article class="card">
+          <div class="cover" aria-hidden="true">
+            <span class="m">$</span> <span class="t">study-agent</span> generate \<br />
+            &nbsp;&nbsp;<span class="a">https://learn.microsoft.com/…</span><br />
+            <span class="m">→ resumen · notas · mapa · preguntas · flashcards</span>
+          </div>
+          <div class="body">
+            <h3>study-agent</h3>
+            <p>
+              CLI open source que convierte cualquier ruta o módulo de Microsoft Learn en un sistema de estudio
+              completo dentro de Obsidian: resumen orientado al examen, notas enlazadas, mapa conceptual en Mermaid,
+              preguntas tipo examen y flashcards con repetición espaciada.
+            </p>
+            <div class="tags">
+              <span class="tag">CLI</span><span class="tag">Obsidian</span><span class="tag">Claude Code</span
+              ><span class="tag">Microsoft Learn</span>
+            </div>
+            <div class="links">
+              <a href="https://github.com/byrogr/study-agent" rel="noopener">GitHub ↗</a>
+              <a href="/blog/study-agent-microsoft-learn-obsidian/">Leer el caso →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="cover" aria-hidden="true">
+            <span class="m">cliente:</span> ¿Cuánto es mi pedido?<br />
+            <span class="m">modelo:</span> redacta la respuesta<br />
+            <span class="m">backend:</span> <span class="a">calcula el monto</span><br />
+            <span class="m">guard:</span> <span class="t">cada cifra = la hoja ✓</span>
+          </div>
+          <div class="body">
+            <h3>Asistente de pedidos por WhatsApp</h3>
+            <p>
+              Asistente que responde pedidos, pagos y pendientes leyendo en tiempo real una hoja de Google Sheets.
+              La IA solo entiende y redacta: los montos los calcula el backend y una guardia descarta cualquier
+              respuesta cuyas cifras no coincidan con la hoja.
+            </p>
+            <div class="tags">
+              <span class="tag">Java 21</span><span class="tag">Quarkus</span><span class="tag">LangChain4j</span
+              ><span class="tag">Azure OpenAI</span><span class="tag">Azure Container Apps</span
+              ><span class="tag">OpenTelemetry</span>
+            </div>
+            <div class="links">
+              <a href="/blog/la-ia-nunca-debe-calcular-un-monto/">Leer el caso →</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="blog" class="alt">
+    <div class="container">
+      <p class="eyebrow">Blog</p>
+      <h2 class="title">Lo que voy aprendiendo</h2>
+      <div class="post-list">
+        {posts.map((p) => (
+          <a class="post-card" href={`/blog/${p.id}/`}>
+            <p class="meta">{formatDate(p.data.pubDate)}</p>
+            <h3>{p.data.title}</h3>
+            <p>{p.data.description}</p>
+            <div class="tags">{p.data.tags.map((t) => <span class="tag">{t}</span>)}</div>
+          </a>
+        ))}
+      </div>
+      <p class="more"><a href="/blog/">Ver todos los artículos →</a></p>
+    </div>
+  </section>
+
+  <section id="contacto">
+    <div class="container">
+      <p class="eyebrow">Contacto</p>
+      <h2 class="title">Hablemos</h2>
+      <div class="contact-grid">
+        <div>
+          <p class="lead">
+            ¿Buscas un ingeniero backend para tu equipo o necesitas apoyo en un proyecto? Estoy abierto a nuevas
+            oportunidades laborales y colaboraciones freelance en microservicios, APIs y soluciones en la nube.
+            Escríbeme y conversemos.
+          </p>
+          <ul>
+            <li><span>Ubicación:</span> Lima, Perú · Híbrido / Remoto</li>
+            <li><a href="https://www.linkedin.com/in/roger-rojas-effio/" rel="noopener">LinkedIn ↗</a></li>
+            <li><a href="https://github.com/byrogr" rel="noopener">GitHub ↗</a></li>
+          </ul>
+        </div>
+
+        <!-- TODO: crea un formulario en https://formspree.io (u otro servicio) y reemplaza TU_ID -->
+        <form class="contact" action="https://formspree.io/f/TU_ID" method="POST">
+          <label>
+            Nombre
+            <input type="text" name="nombre" autocomplete="name" required />
+          </label>
+          <label>
+            Correo electrónico
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+          <label>
+            Mensaje
+            <textarea name="mensaje" required></textarea>
+          </label>
+          <button class="btn primary" type="submit">Enviar mensaje</button>
+          <small>Usaré tus datos únicamente para responderte.</small>
+        </form>
+      </div>
+    </div>
+  </section>
+</Base>
