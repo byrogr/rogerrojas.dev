@@ -129,6 +129,83 @@ img {
   border-bottom-color: var(--teal);
 }
 
+/* Mobile menu (hamburger), shown below 760px */
+.menu {
+  display: none;
+}
+.menu summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+}
+.menu summary::-webkit-details-marker {
+  display: none;
+}
+.menu-icon,
+.menu-icon::before,
+.menu-icon::after {
+  display: block;
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--text);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.menu-icon {
+  position: relative;
+}
+.menu-icon::before,
+.menu-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+}
+.menu-icon::before {
+  top: -6px;
+}
+.menu-icon::after {
+  top: 6px;
+}
+.menu[open] .menu-icon {
+  background: transparent;
+}
+.menu[open] .menu-icon::before {
+  transform: translateY(6px) rotate(45deg);
+}
+.menu[open] .menu-icon::after {
+  transform: translateY(-6px) rotate(-45deg);
+}
+.menu-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: grid;
+  padding: 8px 24px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.menu-panel a {
+  color: var(--soft);
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 600;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.menu-panel a:last-child {
+  border-bottom: 0;
+}
+.menu-panel a:hover,
+.menu-panel a[aria-current='page'] {
+  color: var(--teal);
+}
+
 /* ===== Botones y chips ===== */
 .btn {
   display: inline-flex;
@@ -866,18 +943,15 @@ form.contact .form-notice a {
     padding: 64px 0;
   }
 }
-@media (max-width: 640px) {
-  .site-header .container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding-top: 10px;
-    padding-bottom: 8px;
-  }
+@media (max-width: 760px) {
   .nav {
-    gap: 20px;
-    width: 100%;
+    display: none;
   }
+  .menu {
+    display: block;
+  }
+}
+@media (max-width: 640px) {
   .job {
     padding: 20px;
   }
@@ -894,7 +968,10 @@ form.contact .form-notice a {
   }
   .btn,
   .card,
-  .post-card {
+  .post-card,
+  .menu-icon,
+  .menu-icon::before,
+  .menu-icon::after {
     transition: none;
   }
 }

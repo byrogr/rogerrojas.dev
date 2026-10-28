@@ -39,7 +39,7 @@ specs/               especificaciones SDD
 
 - **Idioma:** todo el texto visible y el contenido del blog en español (es-PE). Código, commits y nombres de archivo en inglés.
 - **Paleta:** ámbar `#F5A524` (Java), turquesa `#4FD1C5` (Python), lavanda `#A99CFF` (.NET), cian `#67E8F9`, fondo `#060A0F`. Usa las variables CSS de `global.css`.
-- **Sin JavaScript de más:** el sitio es estático; solo se permite JS donde la spec lo pida (widget del captcha y envío del formulario).
+- **Sin JavaScript de más:** el sitio es estático; solo se permite JS donde la spec lo pida (widget del captcha y envío del formulario) y para cerrar el menú móvil tras elegir un enlace (`src/scripts/menu.ts`; el menú en sí es un `<details>` que funciona sin JS).
 - **Dependencias:** no añadas ninguna sin justificarla en la spec. Mantén el costo de Azure en ~0 (ver `specs/azure-deploy/`).
 - **Accesibilidad:** HTML semántico, `label` en cada campo, contraste AA, foco visible.
 

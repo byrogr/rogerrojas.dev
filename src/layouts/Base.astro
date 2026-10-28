@@ -14,6 +14,14 @@ const {
 } = Astro.props;
 
 const pageTitle = title ? `${title} · Roger Rojas` : 'Roger Rojas Effio · Ingeniería de Software';
+
+const links = [
+  { href: '/#sobre-mi', label: 'Sobre mí' },
+  { href: '/#experiencia', label: 'Experiencia' },
+  { href: '/#proyectos', label: 'Proyectos' },
+  { href: '/blog/', label: 'Blog', page: 'blog' },
+  { href: '/#contacto', label: 'Contacto' },
+];
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const year = new Date().getFullYear();
 ---
@@ -48,14 +56,25 @@ const year = new Date().getFullYear();
           <span class="a">&lt;</span><span class="t">/</span><span class="a">&gt;</span> roger.rojas
         </a>
         <nav class="nav" aria-label="Principal">
-          <a href="/#sobre-mi">Sobre mí</a>
-          <a href="/#experiencia">Experiencia</a>
-          <a href="/#proyectos">Proyectos</a>
-          <a href="/blog/" aria-current={current === 'blog' ? 'page' : undefined}>Blog</a>
-          <a href="/#contacto">Contacto</a>
+          {links.map((l) => (
+            <a href={l.href} aria-current={l.page && current === l.page ? 'page' : undefined}>{l.label}</a>
+          ))}
         </nav>
+        <!-- Mobile menu: <details> opens/closes without JS; scripts/menu.ts only closes it after navigating -->
+        <details class="menu">
+          <summary aria-label="Menú"><span class="menu-icon" aria-hidden="true"></span></summary>
+          <nav class="menu-panel" aria-label="Principal">
+            {links.map((l) => (
+              <a href={l.href} aria-current={l.page && current === l.page ? 'page' : undefined}>{l.label}</a>
+            ))}
+          </nav>
+        </details>
       </div>
     </header>
+
+    <script>
+      import '../scripts/menu.ts';
+    </script>
 
     <main id="contenido">
       <slot />
