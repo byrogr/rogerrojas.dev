@@ -79,4 +79,4 @@ automáticas con `pytest` que **no** hagan llamadas de red reales.
 | [x] R11 | Cumple | SWA Free + función administrada, Turnstile Free, ACS pago por uso | sin recursos de costo fijo (ver `specs/azure-deploy/`) |
 | [x] R12 | Cumple | `api/tests/` (114 pruebas) | `pytest` con conexiones de red bloqueadas: 114/114 |
 
-Pendiente fuera de esta feature: comprobar en Azure que la función v2 se registra en el primer despliegue (decisión 3 de `design.md`, `azure-deploy`).
+Comprobado en el primer despliegue (`azure-deploy` T3.1, 28-oct-2026): la función v2 se registra en SWA administrada (decisión 3 de `design.md`).

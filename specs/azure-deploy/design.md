@@ -21,7 +21,7 @@ Azure Cost Management ── alerta de presupuesto (5 USD/mes)
 | Dominio `rogerrojas.dev` | Cloudflare Registrar, comprado en oct-2026 (estimado previo: ≈ 8,20 USD el primer año, 12,20 USD de renovación) | ~12 USD/año |
 | Application Insights (opcional) | con tope diario | ≈ 0 |
 
-Un solo grupo de recursos (`rg-web-personal`) para poder borrar todo de una vez. Recurso SWA: `swa-web-personal` (Free),
+Un solo grupo de recursos (`rg-personalweb-prod-eastus2-001`) para poder borrar todo de una vez. Recurso SWA: `swa-personalweb-prod-001` (Free),
 host por defecto `jolly-smoke-0c1dfdd0f.1.azurestaticapps.net` (destino de los CNAME en T3.2), origen de despliegue «Other».
 
 ## CI/CD (GitHub Actions)
@@ -81,7 +81,7 @@ secreto vive en el repositorio (D7).
 ## `staticwebapp.config.json` (raíz de la app que se despliega)
 
 - `platform.apiRuntime`: `python:3.11`.
-- `responseOverrides.404`: `{ "rewrite": "/404.html" }`. La página (`src/pages/404.astro`) es estática: no puede mostrar la ruta pedida, así que el «comando» de consola es fijo. En el emulador local, las respuestas 404 no llevaban las cabeceras globales; T4.1 comprueba si en Azure sí.
+- `responseOverrides.404`: `{ "rewrite": "/404.html" }`. La página (`src/pages/404.astro`) es estática: no puede mostrar la ruta pedida, así que el «comando» de consola es fijo. En el emulador local, las respuestas 404 no llevaban las cabeceras globales; en Azure sí las llevan (comprobado en T3.1). Azure añade además `Strict-Transport-Security` por su cuenta.
 - `globalHeaders`: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`,
   `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), display-capture=()` (funciones que el
   sitio no usa) y `Content-Security-Policy`.
@@ -111,12 +111,12 @@ secreto vive en el repositorio (D7).
   2. **`www`:** `CNAME` en `www` hacia `<app>.azurestaticapps.net` y en SWA *Custom domains → + Add* → `www.rogerrojas.dev`
      con validación **CNAME**.
   3. **Redirección:** marcar `rogerrojas.dev` como dominio por defecto (*Custom domains → Set default*): SWA redirige los
-     demás dominios a él. La documentación no indica el código de estado; se comprueba con `curl -I` en T4.1.
+     demás dominios a él. La documentación no indica el código de estado. *Comprobado en T3.2:* **301** desde `www.rogerrojas.dev` y desde el host `azurestaticapps.net`, conservando ruta y query (`/blog/?x=1`). `http://` responde 301 a `https://` del mismo host. Certificados emitidos por SWA para ambos dominios (renovación automática). El portal muestra «Add a CNAME…» en la raíz porque el *CNAME flattening* devuelve una IP; es inofensivo.
 - Registros hacia SWA en modo **solo DNS** (nube gris, sin proxy de Cloudflare). *Verificado (V4):* SWA exige que el dominio
   resuelva públicamente **a la app** para validar y para renovar el certificado; con el proxy, el DNS devuelve IPs de
   Cloudflare. Si la validación falla aun así, revisar registros `CAA` del dominio (deben permitir a DigiCert).
 - `.dev` está en la lista de precarga HSTS de los navegadores: el sitio solo funciona por HTTPS (D4 se cumple de partida).
-- Después: agregar el dominio a la lista de dominios permitidos del widget de Turnstile y actualizar `site` (D10).
+- Después: agregar el dominio a la lista de dominios permitidos del widget de Turnstile y actualizar `site` (D10). *Hecho (T3.3/T3.4):* el widget solo permite `rogerrojas.dev` (se quitaron `localhost` y el host de `azurestaticapps.net`); `site` ya apuntaba a `https://rogerrojas.dev`, y en producción las URLs canónicas, la sitemap y el RSS usan ese dominio.
 
 ## Correo (ACS)
 

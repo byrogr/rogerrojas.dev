@@ -35,11 +35,11 @@ Depende de `specs/contact-form/` (al menos hasta T1.5 para desplegar la API).
 
 ## Fase 3 — Primera publicación
 
-- [ ] **T3.1** Push a `main` y comprobar el workflow; abrir la URL por defecto de SWA y probar el formulario. *Cubre: D1, D2.*
-- [ ] **T3.2 (manual)** Añadir el dominio personalizado en SWA, crear los registros DNS en Cloudflare (solo DNS), esperar el
+- [x] **T3.1** Push a `main` y comprobar el workflow; abrir la URL por defecto de SWA y probar el formulario. *Cubre: D1, D2.*
+- [x] **T3.2 (manual)** Añadir el dominio personalizado en SWA, crear los registros DNS en Cloudflare (solo DNS), esperar el
   certificado y fijar la variante canónica con su redirección. *Cubre: D4.*
-- [ ] **T3.3 (manual)** Añadir el dominio a los dominios permitidos del widget de Turnstile. *Cubre: D4.*
-- [ ] **T3.4** Cambiar `site` en `astro.config.mjs` al dominio real y volver a desplegar. *Cubre: D10.*
+- [x] **T3.3 (manual)** Añadir el dominio a los dominios permitidos del widget de Turnstile. *Cubre: D4.*
+- [x] **T3.4** Cambiar `site` en `astro.config.mjs` al dominio real y volver a desplegar. *Cubre: D10.*
 
 ## Fase 4 — Verificación y cierre
 

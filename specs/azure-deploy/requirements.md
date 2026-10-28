@@ -41,8 +41,8 @@ RSS y las URLs canónicas sean correctos.
 
 ## Criterios de aceptación globales
 
-- [ ] `https://<dominio>` carga con candado válido y `www`/raíz redirigen entre sí.
-- [ ] Un push a `main` publica en menos de ~10 minutos sin pasos manuales.
-- [ ] Enviar el formulario en producción entrega un correo.
+- [x] `https://<dominio>` carga con candado válido y `www`/raíz redirigen entre sí.
+- [x] Un push a `main` publica en menos de ~10 minutos sin pasos manuales.
+- [x] Enviar el formulario en producción entrega un correo.
 - [ ] Existe la alerta de presupuesto y el costo mensual proyectado es ≈ 0 (aparte del dominio, ~12 USD/año).
 - [ ] Las cabeceras de seguridad aparecen en la respuesta y la consola del navegador no muestra errores de CSP.
