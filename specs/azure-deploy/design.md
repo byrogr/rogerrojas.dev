@@ -43,6 +43,20 @@ instala `api/requirements.txt` con el runtime de `apiRuntime`. Además se añade
 
 Disparadores: `push` a `main`, `pull_request` (abrir/sincronizar/cerrar).
 
+Implementación (`.github/workflows/azure-static-web-apps.yml`):
+- Acciones `actions/checkout@v7`, `actions/setup-node@v7` (Node 22, caché de npm), `actions/setup-python@v7` (3.11, caché
+  de pip) y `Azure/static-web-apps-deploy@v1`. Permisos mínimos: `contents: read` y `pull-requests: write` (comentario
+  con la URL de staging).
+- Tras el build, un paso **falla si `dist/index.html` no trae `data-sitekey`**: sin la variable `PUBLIC_TURNSTILE_SITE_KEY`
+  el formulario quedaría deshabilitado en producción sin que nadie lo notara.
+- `pytest` instala `api/requirements-dev.txt`; el paquete desplegado solo lleva `requirements.txt`, porque `.funcignore`
+  excluye pruebas y archivos de desarrollo.
+- Configuración en GitHub (sin valores en el repo): **variable** `PUBLIC_TURNSTILE_SITE_KEY` y **secreto**
+  `AZURE_STATIC_WEB_APPS_API_TOKEN`.
+- Al crear el recurso SWA (T2.1) se elige **origen de despliegue «Other»**: con «GitHub», Azure añade al repositorio su
+  propio workflow y un secreto con otro nombre, que duplicarían este. El token de despliegue se copia a mano desde
+  *Manage deployment token*.
+
 ## `staticwebapp.config.json` (raíz de la app que se despliega)
 
 - `platform.apiRuntime`: `python:3.11`.

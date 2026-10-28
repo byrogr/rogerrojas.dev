@@ -1,0 +1,75 @@
+name: Azure Static Web Apps CI/CD
+
+# Build in the workflow (Node 22 + pytest) and let the SWA action only deploy dist/ and the API.
+# See specs/azure-deploy/design.md, "CI/CD (GitHub Actions)".
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write # the SWA action comments the staging URL on the PR
+
+jobs:
+  build_and_deploy:
+    name: Build, test and deploy
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build site
+        run: npm run build
+        env:
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
+
+      - name: Check the Turnstile site key reached the build
+        run: |
+          grep -q 'data-sitekey="' dist/index.html || {
+            echo "::error::PUBLIC_TURNSTILE_SITE_KEY is not set (Settings > Secrets and variables > Actions > Variables)"
+            exit 1
+          }
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: api/requirements-dev.txt
+
+      - name: Test API
+        working-directory: api
+        run: |
+          pip install -r requirements-dev.txt
+          python -m pytest
+
+      - name: Deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: dist
+          output_location: ''
+          skip_app_build: true
+          api_location: api
+
+  close_pull_request:
+    name: Close staging environment
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: close
