@@ -57,6 +57,23 @@ Implementación (`.github/workflows/azure-static-web-apps.yml`):
   propio workflow y un secreto con otro nombre, que duplicarían este. El token de despliegue se copia a mano desde
   *Manage deployment token*.
 
+## Configuración fuera del repositorio
+
+El README es una presentación del sitio; esta tabla es la referencia de todo lo que se configura a mano. Ningún valor
+secreto vive en el repositorio (D7).
+
+| Nombre | Tipo | Dónde | Secreto | Uso |
+| --- | --- | --- | --- | --- |
+| `PUBLIC_TURNSTILE_SITE_KEY` | Variable de Actions | GitHub → *Settings → Secrets and variables → Actions → Variables* | No | Site key del widget real; Astro la incrusta en el HTML en el build |
+| `AZURE_STATIC_WEB_APPS_API_TOKEN` | Secreto de Actions | GitHub → *Settings → Secrets and variables → Actions → Secrets* | Sí | Token de despliegue del recurso SWA (*Manage deployment token*) |
+| `TURNSTILE_SECRET_KEY` | Application setting | Azure → recurso SWA → *Settings → Environment variables* | Sí | Verificación del captcha en la función |
+| `ACS_CONNECTION_STRING` | Application setting | Azure → recurso SWA → *Settings → Environment variables* | Sí | Envío de correo con ACS |
+| `MAIL_SENDER` | Application setting | Azure → recurso SWA → *Settings → Environment variables* | No | Remitente verificado en ACS |
+| `MAIL_TO` | Application setting | Azure → recurso SWA → *Settings → Environment variables* | No | Buzón que recibe los mensajes |
+
+`GITHUB_TOKEN` lo crea GitHub en cada ejecución; no hay que configurarlo. En local, los equivalentes son `.env`
+(copia de `.env.example`) y `api/local.settings.json` (copia de `api/local.settings.sample.json`), ambos ignorados por git.
+
 ## `staticwebapp.config.json` (raíz de la app que se despliega)
 
 - `platform.apiRuntime`: `python:3.11`.

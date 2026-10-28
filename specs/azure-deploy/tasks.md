@@ -19,8 +19,9 @@ Depende de `specs/contact-form/` (al menos hasta T1.5 para desplegar la API).
 - [x] **T1.3** Crear `src/pages/404.astro` con el layout y la paleta del sitio. *Cubre: D6.*
 - [x] **T1.4** Crear `.github/workflows/azure-static-web-apps.yml` según `design.md` (build Node 22, pruebas Python, despliegue,
   staging en PR). Sin secretos en el archivo. *Cubre: D2, D3, D7.*
-- [ ] **T1.5** Crear `.env.example` y documentar en el README las variables de GitHub (`PUBLIC_TURNSTILE_SITE_KEY`) y
-  secretos de GitHub necesarios. *Cubre: D7.*
+- [x] **T1.5** Documentar la variable de GitHub (`PUBLIC_TURNSTILE_SITE_KEY`), el secreto de GitHub y los application settings
+  de SWA en `design.md` («Configuración fuera del repositorio») y en los comentarios de `.env.example` (creado por
+  `contact-form` T2.3). El README queda como presentación del sitio. *Cubre: D7.*
 
 ## Fase 2 — Recursos de Azure
 
