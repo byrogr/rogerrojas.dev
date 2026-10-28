@@ -46,7 +46,7 @@ Disparadores: `push` a `main`, `pull_request` (abrir/sincronizar/cerrar).
 ## `staticwebapp.config.json` (raíz de la app que se despliega)
 
 - `platform.apiRuntime`: `python:3.11`.
-- `responseOverrides.404`: `{ "rewrite": "/404.html" }`.
+- `responseOverrides.404`: `{ "rewrite": "/404.html" }`. La página (`src/pages/404.astro`) es estática: no puede mostrar la ruta pedida, así que el «comando» de consola es fijo. En el emulador local, las respuestas 404 no llevaban las cabeceras globales; T4.1 comprueba si en Azure sí.
 - `globalHeaders`: `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`,
   `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), display-capture=()` (funciones que el
   sitio no usa) y `Content-Security-Policy`.

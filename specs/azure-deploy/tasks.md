@@ -16,7 +16,7 @@ Depende de `specs/contact-form/` (al menos hasta T1.5 para desplegar la API).
   validación de dominio en SWA, proxy de Cloudflare) y anotar conclusiones. *Cubre: D2, D3, D4.*
 - [x] **T1.2** Completar `public/staticwebapp.config.json` (lo crea `contact-form` T1.1 con `apiRuntime`) con la 404 y las cabeceras (CSP según `design.md`). *Cubre: D5, D6.*
   *Aceptación:* tras `npm run build`, el archivo está en `dist/`.
-- [ ] **T1.3** Crear `src/pages/404.astro` con el layout y la paleta del sitio. *Cubre: D6.*
+- [x] **T1.3** Crear `src/pages/404.astro` con el layout y la paleta del sitio. *Cubre: D6.*
 - [ ] **T1.4** Crear `.github/workflows/azure-static-web-apps.yml` según `design.md` (build Node 22, pruebas Python, despliegue,
   staging en PR). Sin secretos en el archivo. *Cubre: D2, D3, D7.*
 - [ ] **T1.5** Crear `.env.example` y documentar en el README las variables de GitHub (`PUBLIC_TURNSTILE_SITE_KEY`) y
