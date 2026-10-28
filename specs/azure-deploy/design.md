@@ -21,7 +21,8 @@ Azure Cost Management ── alerta de presupuesto (5 USD/mes)
 | Dominio `rogerrojas.dev` | Cloudflare Registrar, comprado en oct-2026 (estimado previo: ≈ 8,20 USD el primer año, 12,20 USD de renovación) | ~12 USD/año |
 | Application Insights (opcional) | con tope diario | ≈ 0 |
 
-Un solo grupo de recursos (`rg-web-personal`) para poder borrar todo de una vez.
+Un solo grupo de recursos (`rg-web-personal`) para poder borrar todo de una vez. Recurso SWA: `swa-web-personal` (Free),
+host por defecto `jolly-smoke-0c1dfdd0f.1.azurestaticapps.net` (destino de los CNAME en T3.2), origen de despliegue «Other».
 
 ## CI/CD (GitHub Actions)
 
