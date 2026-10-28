@@ -60,4 +60,23 @@ automáticas con `pytest` que **no** hagan llamadas de red reales.
 - [x] Un token inválido o repetido no entrega correo y muestra el error de captcha.
 - [x] Con el honeypot lleno, la respuesta es `200` y no hay correo ni llamada a Turnstile.
 - [x] `npm run build` y `cd api && python -m pytest` pasan.
-- [ ] Ningún secreto aparece en el repositorio (`git grep` limpio).
+- [x] Ningún secreto aparece en el repositorio (`git grep` limpio).
+
+## Trazabilidad (T3.2, 27-oct-2026)
+
+| Req. | Estado | Dónde se cumple | Cómo se comprobó |
+| --- | --- | --- | --- |
+| [x] R1 | Cumple | `function_app.py`, `contact/mailer.py`, `src/scripts/contact.ts` | `test_endpoint`, `test_mailer`; correo real recibido en local (T3.1) |
+| [x] R2 | Cumple | `contact/turnstile.py`, `function_app.py` | `test_turnstile`, `test_endpoint`; claves de prueba `2x`/`3x` en el emulador |
+| [x] R3 | Cumple | `contact/turnstile.py` (solo en la Function); secret en `local.settings.json` / app settings | escaneo de secretos limpio; el HTML solo lleva la site key |
+| [x] R4 | Cumple | `function_app.py`, campo `website` en `index.astro` | `test_endpoint` (sin Turnstile ni correo); emulador |
+| [x] R5 | Cumple | `contact/validation.py` | `test_validation` (límites 9/10, 2000/2001, 100/101, 254/255, inyección de cabeceras) |
+| [x] R6 | Cumple | `contact/mailer.py` (`html.escape`, `plainText` siempre) | `test_mailer` (`<script>` e `<img onerror>` escapados) |
+| [x] R7 | Cumple | `function_app.py` | `test_endpoint`; `curl` 405/415/413 en el emulador |
+| [x] R8 | Cumple | `function_app.py`, `contact/turnstile.py`, `contact/mailer.py` | pruebas de 500/503 y de logs sin datos personales; logs reales revisados en T3.1 |
+| [x] R9 | Cumple | `src/scripts/contact.ts`, región `#contact-status` | prueba manual en el navegador (T3.1) |
+| [x] R10 | Cumple | `contact/config.py`, `.env.example`, `local.settings.sample.json` | escaneo de secretos; `503` si falta una variable (`test_endpoint`) |
+| [x] R11 | Cumple | SWA Free + función administrada, Turnstile Free, ACS pago por uso | sin recursos de costo fijo (ver `specs/azure-deploy/`) |
+| [x] R12 | Cumple | `api/tests/` (114 pruebas) | `pytest` con conexiones de red bloqueadas: 114/114 |
+
+Pendiente fuera de esta feature: comprobar en Azure que la función v2 se registra en el primer despliegue (decisión 3 de `design.md`, `azure-deploy`).

@@ -31,6 +31,6 @@ Marca `[x]` al terminar. «Cubre» indica los requisitos de `requirements.md`.
 ## Fase 3 — Prueba de extremo a extremo
 
 - [x] **T3.1** Probar en local con el emulador de Static Web Apps (`swa start`) y claves de prueba/reales de Turnstile y un recurso ACS de pruebas: éxito, captcha inválido, honeypot, validación. *Cubre: todos.*
-- [ ] **T3.2** Revisión final: `git grep` de secretos, `pytest`, `npm run build`, lista de requisitos R1–R12 marcada.
+- [x] **T3.2** Revisión final: `git grep` de secretos, `pytest`, `npm run build`, lista de requisitos R1–R12 marcada.
 
 > El despliegue y la configuración en Azure están en `specs/azure-deploy/`.
