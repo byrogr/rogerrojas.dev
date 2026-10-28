@@ -21,7 +21,7 @@ npm run build      # debe pasar siempre antes de dar una tarea por terminada
 cd api && python -m pytest   # cuando exista la carpeta api/
 ```
 
-Requiere Node 22.23+ y Python 3.11 (el runtime administrado de Static Web Apps).
+Requiere Node 22.23.4+ y Python 3.11 (el runtime administrado de Static Web Apps).
 
 ## Estructura
 

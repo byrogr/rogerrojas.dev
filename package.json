@@ -2,7 +2,7 @@
   "name": "roger-rojas-web",
   "type": "module",
   "engines": {
-    "node": ">=22.23"
+    "node": ">=22.23.4"
   },
   "version": "1.0.0",
   "private": true,

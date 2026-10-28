@@ -33,7 +33,10 @@ de desplegar (D3) y evita depender de qué versiones trae Oryx. La **API sí la 
 instala `api/requirements.txt` con el runtime de `apiRuntime`. Además se añade `"engines": { "node": ">=22.23" }` a
 `package.json` (T1.4) para documentar el requisito. Flujo:
 
-1. `actions/setup-node` (Node 22) → `npm ci` → `npm run build` (con `PUBLIC_TURNSTILE_SITE_KEY` desde variables de GitHub).
+> El primer despliegue (T3.1) falló en `npm run build`: Astro 7.4.2 exige Node **≥ 22.23.4** (publicado el 20-oct-2026) y la
+> imagen del runner traía un Node 22 anterior. Por eso `setup-node` usa `check-latest: true` y `engines` pide `>=22.23.4`.
+
+1. `actions/setup-node` (Node 22, `check-latest: true`) → `npm ci` → `npm run build` (con `PUBLIC_TURNSTILE_SITE_KEY` desde variables de GitHub).
 2. `actions/setup-python` (3.11) → `pip install -r api/requirements.txt` → `pytest`.
 3. Despliegue con la acción oficial **`Azure/static-web-apps-deploy@v1`** (*verificado, V2*) con `action: "upload"`,
    `skip_app_build: true`, `app_location: "dist"` (con `skip_app_build`, es la carpeta ya construida), `output_location: ""`,
