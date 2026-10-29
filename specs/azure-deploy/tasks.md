@@ -31,7 +31,7 @@ Depende de `specs/contact-form/` (al menos hasta T1.5 para desplegar la API).
   copiar remitente y cadena de conexión. *Cubre: D8.*
 - [x] **T2.3 (manual)** Cargar en *Application settings* de SWA: `TURNSTILE_SECRET_KEY`, `ACS_CONNECTION_STRING`,
   `MAIL_SENDER`, `MAIL_TO`. *Cubre: D7, D8.*
-- [ ] **T2.4 (manual, opcional)** Activar Application Insights con tope diario de ingesta. *Cubre: D9.*
+- [ ] **T2.4 (manual, opcional)** Activar Application Insights con tope diario de ingesta. *Cubre: D9.* *Pospuesta:* no hizo falta para diagnosticar el despliegue; activar solo si se necesitan logs de la función.
 
 ## Fase 3 — Primera publicación
 
@@ -43,7 +43,10 @@ Depende de `specs/contact-form/` (al menos hasta T1.5 para desplegar la API).
 
 ## Fase 4 — Verificación y cierre
 
-- [ ] **T4.1** Revisar cabeceras (herramienta como `curl -I` o el inspector del navegador), consola sin errores de CSP, RSS y sitemap con el dominio correcto. *Cubre: D5, D10.*
-- [ ] **T4.2 (manual)** Correo propio: verificar el dominio de envío (SPF/DKIM/DMARC) y cambiar `MAIL_SENDER`. *Cubre: D8.*
-- [ ] **T4.3 (manual)** Confirmar que la alerta de presupuesto llega y anotar el costo proyectado. *Cubre: D9.*
-- [ ] **T4.4** Marcar todos los criterios de aceptación de `requirements.md`.
+- [x] **T4.1** Revisar cabeceras (herramienta como `curl -I` o el inspector del navegador), consola sin errores de CSP, RSS y sitemap con el dominio correcto. *Cubre: D5, D10.*
+- [x] **T4.2 (manual)** Correo propio: verificar el dominio de envío (SPF/DKIM/DMARC) y cambiar `MAIL_SENDER`. *Cubre: D8.*
+- [x] **T4.3 (manual)** Confirmar la alerta de presupuesto y anotar el costo proyectado. *Cubre: D9.*
+  *Hecho (28-oct-2026):* `budget-web-personal` existe (5 USD/mes, alertas 50/90/100 %); costo del mes 0,00 USD y pronóstico
+  0,00 USD. La entrega del correo de alerta no se probó (con costo 0 nunca se dispara); prueba opcional: bajar el importe
+  a 0,01, esperar el aviso y restaurarlo.
+- [x] **T4.4** Marcar todos los criterios de aceptación de `requirements.md`.
