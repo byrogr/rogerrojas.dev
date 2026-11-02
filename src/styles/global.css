@@ -17,6 +17,7 @@
   --font: 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --brand: 'Chakra Petch', var(--mono); /* logo y títulos */
+  --reading: 'IBM Plex Sans', var(--font); /* texto de los artículos */
   --maxw: 1120px;
 }
 
@@ -850,13 +851,15 @@ form.contact .form-notice a {
 .post-head .back:hover {
   text-decoration: underline;
 }
+/* 660px of text (~70 characters per line at 18px), plus the 24px side padding */
 .narrow {
-  max-width: 780px;
+  max-width: 908px;
   margin: 0 auto;
   padding: 0 24px;
 }
 .prose {
   padding-bottom: 80px;
+  font-family: var(--reading);
   font-size: 18px;
   color: var(--soft);
 }
@@ -873,6 +876,13 @@ form.contact .form-notice a {
 }
 .prose p {
   margin: 0 0 20px;
+}
+/* Justified body text; hyphenation (lang="es") avoids wide gaps between words */
+.prose p,
+.prose li {
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 .prose a {
   color: var(--cyan);
@@ -923,6 +933,28 @@ form.contact .form-notice a {
 }
 .prose blockquote p:last-child {
   margin-bottom: 0;
+}
+/* Tables scroll horizontally on narrow screens instead of widening the page */
+.prose table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 0 0 24px;
+  font-size: 15px;
+}
+.prose th,
+.prose td {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.prose th {
+  background: var(--panel);
+  color: var(--text);
+}
+.prose td code {
+  white-space: nowrap;
 }
 
 /* ===== Responsive ===== */

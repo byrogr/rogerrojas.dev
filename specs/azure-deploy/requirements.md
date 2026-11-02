@@ -44,5 +44,5 @@ RSS y las URLs canónicas sean correctos.
 - [x] `https://<dominio>` carga con candado válido y `www`/raíz redirigen entre sí.
 - [x] Un push a `main` publica en menos de ~10 minutos sin pasos manuales.
 - [x] Enviar el formulario en producción entrega un correo.
-- [ ] Existe la alerta de presupuesto y el costo mensual proyectado es ≈ 0 (aparte del dominio, ~12 USD/año).
-- [ ] Las cabeceras de seguridad aparecen en la respuesta y la consola del navegador no muestra errores de CSP.
+- [x] Existe la alerta de presupuesto y el costo mensual proyectado es ≈ 0 (aparte del dominio, ~12 USD/año). *(28-oct-2026: 0,00 USD acumulado y pronosticado.)*
+- [x] Las cabeceras de seguridad aparecen en la respuesta y la consola del navegador no muestra errores de CSP. *(Los avisos del iframe de Turnstile vienen de la CSP de Cloudflare, no de la nuestra; ver `design.md`.)*

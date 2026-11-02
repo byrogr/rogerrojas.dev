@@ -96,6 +96,13 @@ secreto vive en el repositorio (D7).
   *Verificado (V5):* Cloudflare solo exige `script-src` y `frame-src` con `https://challenges.cloudflare.com`; `connect-src`
   solo lo necesita el modo *pre-clearance*, que no usamos (el widget hace sus peticiones desde su iframe). Turnstile no
   documenta necesidad de `style-src`. La consola del navegador sin errores de CSP se comprueba en T4.1.
+- *Comprobado en T4.1 (28-oct-2026):* las cuatro cabeceras llegan en páginas, 404, PDF y RSS; los únicos recursos externos
+  son Google Fonts; no hay `<script>` inline; los `style=` de Shiki (40 en un artículo) quedan cubiertos por `'unsafe-inline'`.
+  La consola **no** muestra errores de nuestra CSP. Sí aparecen errores «Connecting to 'data:,' violates … connect-src
+  'self' https://hagen.challenges.cloudflare.com …» con origen `normal?lang=es`: son de la CSP **propia del iframe de
+  Turnstile** (servido por Cloudflare), no de la nuestra; el widget funciona igual y no se pueden corregir desde el sitio.
+- Las respuestas de `/api/*` no reciben `globalHeaders` (SWA los aplica al contenido estático). Son JSON, así que la CSP no
+  aplica; añadir `X-Content-Type-Options: nosniff` desde la función queda como mejora opcional.
 - Descartado `security.csp` de Astro: emite la política en una `<meta>` con hashes, duplicaría la de las cabeceras y una
   `<meta>` no admite `frame-ancestors`.
 - Como el archivo debe terminar en `dist/`, colocarlo en `public/staticwebapp.config.json` para que Astro lo copie.
@@ -124,9 +131,24 @@ secreto vive en el repositorio (D7).
    dirección de remitente a `MAIL_SENDER`.
 2. Vincular el dominio al recurso de Communication Services y guardar su cadena de conexión como
    `ACS_CONNECTION_STRING` (application setting de SWA, **no** en el repo).
-3. Con el dominio propio listo: configurar dominio personalizado en Email Communication Service con SPF y DKIM
-   (los pide el portal) y DMARC; cambiar `MAIL_SENDER`. *VERIFICAR* en el portal (se resuelve en T4.2).
-
+3. Con el dominio propio listo (*verificado, V6*), en el **Email Communication Service** → *Provision domains → Add domain →
+   Custom domain* → `rogerrojas.dev`:
+   - Verificación de propiedad: registro `TXT` en `@` con el valor que da el portal (15–30 min).
+   - Autenticación del remitente: `TXT` en `@` = `v=spf1 include:spf.protection.outlook.com -all` (único SPF del dominio) y dos
+     `CNAME` en **solo DNS**: `selector1-azurecomm-prod-net._domainkey` → `selector1-azurecomm-prod-net._domainkey.azurecomm.net`
+     y `selector2-azurecomm-prod-net._domainkey` → `selector2-azurecomm-prod-net._domainkey.azurecomm.net` (usar siempre los
+     valores que muestre el portal).
+   - DMARC (ACS no lo configura): `TXT` en `_dmarc` = `v=DMARC1; p=none`; endurecer a `p=quarantine` cuando los correos
+     lleguen con DKIM alineado.
+   - Conectar el dominio al recurso **Communication Services** (*Email → Domains → Connect domain*) y cambiar `MAIL_SENDER` a
+     **`DoNotReply@rogerrojas.dev`** en los application settings de SWA.
+   - Con los límites por defecto **no se pueden crear otros remitentes** (`contacto@`…): exige pedir más cuota. Límite del
+     dominio propio: 30 correos/min y 100/hora (frente a 5/min y 10/hora del administrado).
+   *Hecho (T4.2, 28-oct-2026):* dominio verificado, SPF único, DKIM con clave publicada (`v=DKIM1; k=rsa`), DMARC `p=none`,
+   `MAIL_SENDER=DoNotReply@rogerrojas.dev` y correo recibido. Pendiente: pasar DMARC a `p=quarantine` tras confirmar
+   `dkim=pass` y `dmarc=pass` en las cabeceras de los correos recibidos. El dominio no tiene `MX` (no recibe correo).
+   [Dominios personalizados de ACS](https://learn.microsoft.com/azure/communication-services/quickstarts/email/add-custom-verified-domains) ·
+   [Varios remitentes](https://learn.microsoft.com/azure/communication-services/quickstarts/email/add-multiple-senders)
 ## Costos y observabilidad
 
 - Presupuesto mensual de 5 USD con alertas al 50 %, 90 % y 100 % por correo (Cost Management).
